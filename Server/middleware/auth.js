@@ -1,6 +1,6 @@
 // auth middleware for protecting routes
 import jwt from 'jsonwebtoken';
-import userModel from '../models/User';
+import userModel from '../models/User.js';
 
 export const protectedRoute = async (req, res, next) => {
   const token = req.cookies.token || req.headers.token;
