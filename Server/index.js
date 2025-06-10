@@ -1,20 +1,54 @@
 // server.js
-const express = require('express');
-const bodyParser = require('body-parser');
-require('dotenv').config();
-const connectDB = require('./config/db');
+import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import connectDB from './lib/db.js';
 
+dotenv.config();
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-// Middleware
-app.use(bodyParser.json());
-
-// Connect DB
+// Connect MongoDB
 connectDB();
 
-// Routes
-app.use('/api/auth', require('./routes/auth'));
+app.use(express.json({limit: '5mb'}));
+app.use(cors());
+const port = process.env.PORT || 3000;
+app.use("/api/status", (req, res) => {
+  res.send("Server is running on " + port);
+});
 
-// Server Start
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+// Socket.IO logic
+// io.on('connection', (socket) => {
+//   console.log("User connected");
+
+//   socket.on('send_message', async (data) => {
+//     const message = new Message({
+//       username: data.username,
+//       text: data.text,
+//       timestamp: new Date(),
+//     });
+
+//     await message.save(); // Save to MongoDB
+
+//     io.emit('receive_message', message); // Broadcast to all clients
+//   });
+
+//   socket.on('disconnect', () => {
+//     console.log("User disconnected");
+//   });
+// });
+
+
+app.get('/', (req, res) => {
+  res.send('Welcome to the Chat Server');
+}
+);
+server.listen(port, () => {
+  console.log("Server is running on port 3000");
+});
