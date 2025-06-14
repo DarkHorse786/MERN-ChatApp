@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './lib/db.js';
+import messageRouter from './routes/messageRouter.js';
 import authRouter from './routes/authRouter.js';
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.use("/api/status", (req, res) => {
   res.send("Server is running on " + port);
 });
 app.use("/api/auth", authRouter);
+app.use("/api/messages", messageRouter);
 
 
 // Socket.IO logic
