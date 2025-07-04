@@ -10,7 +10,7 @@ import authRouter from './routes/authRouter.js';
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+
 
 // Connect MongoDB
 connectDB();
@@ -26,25 +26,39 @@ app.use("/api/messages", messageRouter);
 
 
 // Socket.IO logic
-// io.on('connection', (socket) => {
-//   console.log("User connected");
+// initilize socket.io
+export const io =new Server(server, {
+  cors: {origins:"*"},
+});
 
-//   socket.on('send_message', async (data) => {
-//     const message = new Message({
-//       username: data.username,
-//       text: data.text,
-//       timestamp: new Date(),
-//     });
+//store online users
+export const userSocketMap = {}; // {userId: socketId}
 
-//     await message.save(); // Save to MongoDB
+// handle socket connection
+io.on('connection', (socket) => {
+  const userId = socket.handshake.query.userId; // Get userId from the query parameters
+  console.log("New user connected:", userId);
+  if (!userId) {
+      console.error("User ID is required to join");
+      return;
+  }
+  userSocketMap[userId] = socket.id;
+  console.log(`User ${userId} joined with socket ID: ${socket.id}`);
+  io.emit('getOnlineUsers', Object.keys(userSocketMap)); // Emit the list of online users
 
-//     io.emit('receive_message', message); // Broadcast to all clients
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log("User disconnected");
-//   });
-// });
+  // Handle user disconnecting
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+    for (const [userId, id] of Object.entries(userSocketMap)) {
+      if (id === socket.id) {
+        delete userSocketMap[userId];
+        console.log(`User ${userId} removed from online users`);
+        io.emit('getOnlineUsers', Object.keys(userSocketMap)); // Emit updated list of online users
+        break;
+      }
+    }
+  });
+});
 
 
 app.get('/', (req, res) => {
