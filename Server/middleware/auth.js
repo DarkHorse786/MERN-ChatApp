@@ -6,7 +6,7 @@ export const protectedRoute = async (req, res, next) => {
   const token = req.cookies.token || req.headers.token;
 
   if (!token) {
-    return res.status(false).json({ message: 'Unauthorized access' });
+    return res.json({ success: false, message: 'Unauthorized access' });
   }
 
   try {
@@ -14,13 +14,13 @@ export const protectedRoute = async (req, res, next) => {
     const user = await userModel.findById(decoded.userId);
 
     if (!user) {
-      return res.status(false).json({ message: 'User not found' });
+      return res.json({ success: false, message: 'User not found' });
     }
 
     req.user = user; // Attach user to request object
     next(); // Proceed to the next middleware or route handler
   } catch (error) {
     console.error(error);
-    res.status(false).json({ message: 'Invalid token' });
+    res.json({ success: false, message: 'Invalid token' });
   }
-}
+};

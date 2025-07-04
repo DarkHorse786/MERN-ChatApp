@@ -21,8 +21,7 @@ const port = process.env.PORT || 3000;
 app.use("/api/status", (req, res) => {
   res.send("Server is running on " + port);
 });
-app.use("/api/auth", authRouter);
-app.use("/api/messages", messageRouter);
+
 
 
 // Socket.IO logic
@@ -65,6 +64,8 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Chat Server');
 }
 );
+app.use("/api/auth", authRouter);
+app.use("/api/messages", messageRouter);
 server.listen(port, () => {
   console.log("Server is running on port 3000");
 });

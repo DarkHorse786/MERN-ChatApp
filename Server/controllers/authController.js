@@ -5,146 +5,141 @@ import bcrypt from "bcryptjs";
 
 // signup user
 export const signup = async (req, res) => {
-  const { fullName,email, password ,bio} = req.body;
+  const { fullName, email, password, bio } = req.body;
   try {
-    // Validate input
     if (!fullName || !email || !password) {
-      return res.status(false).json({ message: "All fields are required" });
+      return res.json({ success: false, message: "All fields are required" });
     }
-    // Check if user already exists
+
     let user = await userModel.findOne({ email });
     if (user) {
-      return res.status(false).json({ message: "User already exists" });
+      return res.json({ success: false, message: "User already exists" });
     }
-    // bcrypt password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);    
 
-    // Create new user
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const newUser = new userModel({
       fullName,
       email,
-      password : hashedPassword,
+      password: hashedPassword,
       bio,
       profilePic: req.file ? req.file.path : "",
     });
 
-    //token generation
     const token = generateToken(newUser._id);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
 
-
-    // Save user to database 
     await newUser.save();
-    res.status(true).json({
-      message: "User registered successfully", userData: newUser, token
-    });
 
+    res.json({
+      success: true,
+      message: "User registered successfully",
+      userData: newUser,
+      token,
+    });
   } catch (error) {
     console.error(error);
-    res.status(false).json({ message: "Internal server error" });
+    res.json({ success: false, message: "Internal server error" });
   }
-}
+};
 
 // signin user
 export const signin = async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Validate input
     if (!email || !password) {
-      return res.status(false).json({ message: "Email and password are required" });
+      return res.json({ success: false, message: "Email and password are required" });
     }
 
-    // Check if user exists
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(false).json({ message: "Invalid credentials" });
+      return res.json({ success: false, message: "Invalid credentials" });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(false).json({ message: "Invalid credentials" });
+      return res.json({ success: false, message: "Invalid credentials" });
     }
 
-    // Generate token
     const token = generateToken(user._id);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
 
-    res.status(true).json({
+    res.json({
+      success: true,
       message: "User logged in successfully",
       userData: user,
       token,
     });
-
   } catch (error) {
     console.error(error);
-    res.status(false).json({ message: "Internal server error" });
+    res.json({ success: false, message: "Internal server error" });
   }
-}
+};
 
-//controller to check if user is authenticated
+// check if user is authenticated
 export const isAuthenticated = async (req, res) => {
   try {
-    // Check if user is authenticated
     if (!req.user) {
-      return res.status(false).json({ message: "User not authenticated" });
+      return res.json({ success: false, message: "User not authenticated" });
     }
 
-    res.status(true).json({
+    res.json({
+      success: true,
       message: "User is authenticated",
       userData: req.user,
     });
   } catch (error) {
     console.error(error);
-    res.status(false).json({ message: "Internal server error" });
+    res.json({ success: false, message: "Internal server error" });
   }
-}
+};
 
-// controller to update user profile
+// update user profile
 export const updateProfile = async (req, res) => {
   try {
-    // Check if user is authenticated
     if (!req.user) {
-      return res.status(false).json({ message: "User not authenticated" });
+      return res.json({ success: false, message: "User not authenticated" });
     }
 
     const { profilePic, fullName, bio } = req.body;
     const userId = req.user._id;
     let updatedUser;
 
-    if(!profilePic) 
-    {
-        updatedUser= await userModel.findByIdAndUpdate(userId, {bio,fullName}, { new: true });
-    }
-    else
-    {
-        const uploadedProfilePic = await cloudinary.uploader.upload(profilePic);
-        updatedUser = await userModel.findByIdAndUpdate(
-            userId, 
-            { 
-                profilePic: uploadedProfilePic.secure_url, 
-                fullName, 
-                bio 
-            }, 
-            { new: true }
-        );
+    if (!profilePic) {
+      updatedUser = await userModel.findByIdAndUpdate(
+        userId,
+        { fullName, bio },
+        { new: true }
+      );
+    } else {
+      const uploadedProfilePic = await cloudinary.uploader.upload(profilePic);
+      updatedUser = await userModel.findByIdAndUpdate(
+        userId,
+        {
+          profilePic: uploadedProfilePic.secure_url,
+          fullName,
+          bio,
+        },
+        { new: true }
+      );
     }
 
-    res.status(true).json({
+    res.json({
+      success: true,
       message: "Profile updated successfully",
       userData: updatedUser,
     });
   } catch (error) {
     console.error(error);
-    res.status(false).json({ message: "Internal server error" });
+    res.json({ success: false, message: "Internal server error" });
   }
-}
+};
