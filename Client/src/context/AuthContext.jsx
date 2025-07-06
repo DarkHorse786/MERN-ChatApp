@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 // logout function to handle user logout and disconnect from socket
 const logout = async () => {    
     try {
-        await axios.get("/api/auth/logout");
+        // await axios.get("/api/auth/logout");
         setToken(null);
         localStorage.removeItem("token");
         setAuthUser(null);
@@ -113,7 +113,7 @@ const updateProfile = async (profileData) => {
       setAuthUser(null);
       setOnlineUsers(null);
     }
-  }, [token]);
+  }, []);
 
   const value = {
     axios,
@@ -123,7 +123,8 @@ const updateProfile = async (profileData) => {
     token,
     login,
     logout,
-    updateProfile
+    updateProfile,
+    checkAuth 
   };
 
   return (

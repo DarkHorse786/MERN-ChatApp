@@ -2,8 +2,11 @@ import React from "react";
 import assets, { userDummyData } from "../assets/assets.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authContext } from "../context/AuthContext.jsx";
+import { useContext } from "react";
 
 const SideBar = ({ selectedUser, setSelectedUser }) => {
+  const {logout} = useContext(authContext);
   const navigate = useNavigate();
   return (
     <div
@@ -72,9 +75,9 @@ const SideBar = ({ selectedUser, setSelectedUser }) => {
           </div>
         ))}
       </div>
-      <button className="absolute bottom-5 transform late-x-1/2 bg-gradient-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer">
+      <button onClick={()=> logout()} className="absolute bottom-5 transform late-x-1/2 bg-gradient-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer">
           Logout
-        </button>
+      </button>
       
     </div>
   );
