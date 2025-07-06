@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import assets, { userDummyData } from "../assets/assets.js";
+import { authContext } from "../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 const LoginPage = () => {
   const [currState, setCurrState] = useState("Sign up");
   const [fullName, setFullName] = useState("");
@@ -8,13 +10,21 @@ const LoginPage = () => {
   const [bio, setBio] = useState("");
   const [isDataSubmitted, setIsDataSubmitted] = useState(false);
 
+  // login and signup handler
+  const {login} = useContext(authContext);
+
   const onSubmitHandler = (e)=>{
     e.preventDefault();
     if(currState === 'Sign up' && !isDataSubmitted ){
       setIsDataSubmitted(true);
       return;
     }
-  }
+    login(currState=== "Sign up" ? "signup" : "login", {
+      fullName: currState === "Sign up" ? fullName : "",
+      email,
+      password,
+      bio: currState === "Sign up" ? bio : "",})
+    }
 
   return (
     <div className="min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl">

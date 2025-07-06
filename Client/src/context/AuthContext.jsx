@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await axios.get("/api/auth/authentication");
       if (data.success) {
         setAuthUser(data.userData);
+        console.log("User data fetched successfully:", data.userData);
         connectSocket(data.userData);
       }
 
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   //login function to handle user authentication and socket connection
   const login = async (state,Credentials) => {
     try {
-        const {data} = await axios.post(`/api/auth/ ${state}`, Credentials);
+        const {data} = await axios.post(`/api/auth/${state}`, Credentials);
         if (data.success) {
             setToken(data.token);
             localStorage.setItem("token", data.token);
@@ -126,6 +127,6 @@ const updateProfile = async (profileData) => {
   };
 
   return (
-    <authContext.Provider value={{ value }}>{children}</authContext.Provider>
+    <authContext.Provider value={ value }>{children}</authContext.Provider>
   );
 };

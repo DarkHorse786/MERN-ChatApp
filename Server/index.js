@@ -1,7 +1,8 @@
 // server.js
 import express from 'express';
 import http from 'http';
-import { Server } from 'socket.io';
+import { Server } from 'socket.io'
+import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './lib/db.js';
@@ -16,7 +17,24 @@ const server = http.createServer(app);
 connectDB();
 
 app.use(express.json({limit: '5mb'}));
-app.use(cors());
+
+const allowedOrigins = [
+  "http://localhost:5173",         // for local development
+  "https://your-frontend-domain.com" // ✅ your hosted frontend domain
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+app.use(cookieParser());
+
 const port = process.env.PORT || 3000;
 app.use("/api/status", (req, res) => {
   res.send("Server is running on " + port);
@@ -26,8 +44,11 @@ app.use("/api/status", (req, res) => {
 
 // Socket.IO logic
 // initilize socket.io
-export const io =new Server(server, {
-  cors: {origins:"*"},
+export const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true
+  }
 });
 
 //store online users
@@ -67,5 +88,5 @@ app.get('/', (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
 server.listen(port, () => {
-  console.log("Server is running on port 3000");
+  console.log("Server is running on port ", port);
 });
