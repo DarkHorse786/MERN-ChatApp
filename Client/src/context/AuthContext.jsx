@@ -70,20 +70,25 @@ const logout = async () => {
         toast.error(error.message || "Logout failed");
     }
 };
-
-// update profile function to handle user profile updates
 const updateProfile = async (profileData) => {
-    try {
-        const { data } = await axios.put("/api/auth/update-profile", profileData);
-        if (data.success) {
-            setAuthUser(data.updatedUser);
-            toast.success("Profile updated successfully");
-        } else {
-            toast.error(data.message);
-        }
-    } catch (error) {
-        toast.error(error.message || "Profile updation failed");
+  try {
+    const { data } = await axios.put("/api/auth/update-profile", profileData);
+    if (!data.success) {
+      <div>loading</div>
+      return { success: false, message: data.message , loading: true };
+
+    } else if (data.success) {
+       setAuthUser(data.updatedUser);
+      toast.success("Profile updated successfully");
+      return { success: true };
+    } else {
+       toast.error(data.message);
+      return { success: false, message: data.message };
     }
+  } catch (error) {
+    toast.error(error.message || "Profile updation failed");
+    return { success: false, message: error.message };
+  }
 };
   // conect socket function to handle socket connection and online users updates
     const connectSocket = (userData) => {

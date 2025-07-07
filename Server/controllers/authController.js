@@ -112,31 +112,29 @@ export const updateProfile = async (req, res) => {
 
     const { profilePic, fullName, bio } = req.body;
     const userId = req.user._id;
-    let updatedUser;
 
-    if (!profilePic) {
-      updatedUser = await userModel.findByIdAndUpdate(
-        userId,
-        { fullName, bio },
-        { new: true }
-      );
-    } else {
-      const uploadedProfilePic = await cloudinary.uploader.upload(profilePic);
-      updatedUser = await userModel.findByIdAndUpdate(
-        userId,
-        {
-          profilePic: uploadedProfilePic.secure_url,
-          fullName,
-          bio,
-        },
-        { new: true }
-      );
+    // Fetch the current user once
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
     }
+
+    // Update values
+    if (profilePic) {
+      const uploadedProfilePic = await cloudinary.uploader.upload(profilePic);
+      user.profilePic = uploadedProfilePic.secure_url;
+    }
+
+    user.fullName = fullName || user.fullName;
+    user.bio = bio || user.bio;
+
+    // Save the updated user
+    await user.save();
 
     res.json({
       success: true,
       message: "Profile updated successfully",
-      userData: updatedUser,
+      updatedUser: user, // original user object, already in memory
     });
   } catch (error) {
     console.error(error);

@@ -17,7 +17,6 @@ const ProfilePage = () => {
         fullName: name,
         bio: bio,
       });
-      await checkAuth(); // Refresh user data after update
       navigate("/");
       return;
     }
@@ -30,7 +29,6 @@ const ProfilePage = () => {
         fullName: name,
         bio: bio,
       });
-      await checkAuth(); // Refresh user data after update
       navigate("/");
     };
   }
