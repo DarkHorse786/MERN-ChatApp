@@ -24,14 +24,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
       bio,
-      profilePic: req.file ? req.file.path : "",
-    });
-
-    const token = generateToken(newUser._id);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      profilePic: req.file ? req.file.path : ""
     });
 
     await newUser.save();
@@ -39,8 +32,7 @@ export const signup = async (req, res) => {
     res.json({
       success: true,
       message: "User registered successfully",
-      userData: newUser,
-      token,
+      userData: newUser
     });
   } catch (error) {
     console.error(error);
@@ -69,15 +61,14 @@ export const signin = async (req, res) => {
     const token = generateToken(user._id);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "strict"
     });
 
     res.json({
       success: true,
       message: "User logged in successfully",
-      userData: user,
-      token,
+      userData: user
     });
   } catch (error) {
     console.error(error);
@@ -95,7 +86,7 @@ export const isAuthenticated = async (req, res) => {
     res.json({
       success: true,
       message: "User is authenticated",
-      userData: req.user,
+      userData: req.user
     });
   } catch (error) {
     console.error(error);
@@ -136,6 +127,17 @@ export const updateProfile = async (req, res) => {
       message: "Profile updated successfully",
       updatedUser: user, // original user object, already in memory
     });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Internal server error" });
+  }
+};
+
+// logout user
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.json({ success: true, message: "User logged out successfully" });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: "Internal server error" });
