@@ -59,16 +59,21 @@ const ChatContainer = () => {
             <span className="w-2 h-2 rounded-full bg-green-500"></span>
           }
         </p>
+        <div className="py-2 group relative">
+              <img
+                src={assets.menu_icon}
+                alt="Menu"
+                className="max-h-5 cursor-pointer"
+              />
+              <div className="absolute right-0 top-full z-20 bg-[#282142] w-24 p-3 border border-gray-600 text-gray-100 rounded-md hidden group-hover:block">
+                <p className="cursor-pointer text-sm" >Clear Chat</p>
+              </div>
+            </div>
         <img
           onClick={() => setSelectedUser(null)}
           src={assets.arrow_icon}
           alt="Back"
           className="md:hidden max-w-7 cursor-pointer"
-        />
-        <img
-          src={assets.help_icon}
-          alt="Help"
-          className="max-md:hidden max-w-7"
         />
       </div>
       {/* chat */}
@@ -103,7 +108,7 @@ const ChatContainer = () => {
                 src={
                   msg.senderId === authUser._id
                     ? authUser?.profilePic || assets.profile_martin
-                    : selectedUser.profilePic || assets.avatar_icon
+                    : selectedUser.profilePic || assets.profile_martin
                 }
                 alt=""
                 className="w-7 rounded-full"

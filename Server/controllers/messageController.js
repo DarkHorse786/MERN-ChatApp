@@ -85,12 +85,10 @@ export const markMessageAsSeen = async (req, res) => {
 //send message to the selected user
 export const sendMessage = async (req, res) => {
     try {
-        console.log("Sending message to user:", req.body.text);
         const { text, image } = req.body; // Get the receiverId, text, and image from the request body
-        console.log("Received text:", req.params);
         const { id: receiverId } = req.params; // Get the receiverId from the request parameters
-        if (!receiverId || !text) {
-            return res.json({ success: false, message: "Receiver ID and text are required" });
+        if (!receiverId) {
+            return res.json({ success: false, message: "Receiver ID is required" });
         }
         const senderId = req.user._id; // Get the logged-in user's ID
 
@@ -98,10 +96,8 @@ export const sendMessage = async (req, res) => {
         // If an image is provided, process it
         if (image) {
             // Upload the image to Cloudinary
-            const uploadResponse = await cloudinary.uploader.upload(image, {
-                folder: "chat_images", // Specify the folder in Cloudinary
-                resource_type: "image" // Specify the resource type
-            });
+            const uploadResponse = await cloudinary.uploader.upload(image
+            );
             imageUrl = uploadResponse.secure_url; // Get the secure URL of the uploaded image
             if (!imageUrl) {
                 return res.json({ success: false, message: "Image upload failed" });
@@ -126,7 +122,6 @@ export const sendMessage = async (req, res) => {
         }
         res.json({ success: true, messageData: newMessage }); // Respond with the created message
     } catch (error) {
-        console.error("Error sending message:", error);
-        res.json({ success: false, message: "Internal server error" });
+        res.json({ success: false, message: "Internal server error",error: error.message });
     }
 };

@@ -1,6 +1,6 @@
 // server.js
 import express from 'express';
-import http from 'http';
+import http, { createServer } from 'http';
 import { Server } from 'socket.io'
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
@@ -10,7 +10,7 @@ import messageRouter from './routes/messageRouter.js';
 import authRouter from './routes/authRouter.js';
 dotenv.config();
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 
 
 // Connect MongoDB
