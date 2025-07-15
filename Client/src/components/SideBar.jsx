@@ -1,20 +1,25 @@
-import React from "react";
-import assets, { userDummyData } from "../assets/assets.js";
+import React, { useEffect } from "react";
+import assets from "../assets/assets.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../context/AuthContext.jsx";
 import { useContext } from "react";
+import { ChatContext } from "../context/ChatContext.jsx";
 
-const SideBar = ({ selectedUser, setSelectedUser }) => {
-  const { logout } = useContext(authContext);
+const SideBar = () => {
+  const {selectedUser,getUsers,users, setSelectedUser,unseenMessages, setUnseenMessages} = useContext(ChatContext);
+  const { logout,onlineUsers } = useContext(authContext);
   const navigate = useNavigate();
+  
+  const [seachInput, setSearchInput] = useState("");
+  const filteredUsers = seachInput ? users.filter((user)=>user.fullName.toLowerCase().includes(seachInput.toLowerCase())) : users;
+  
+  useEffect(() => {
+    getUsers();
+  }, [onlineUsers]);
 
   return (
-    <div
-      className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl text-white flex flex-col justify-between ${
-        selectedUser ? " max-md:hidden" : ""
-      }`}
-    >
+    <div className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl text-white flex flex-col justify-between ${selectedUser ? " max-md:hidden" : ""}`}>
       {/* Scrollable Top Content */}
       <div className="overflow-y-scroll">
         <div className="pb-5">
@@ -34,25 +39,27 @@ const SideBar = ({ selectedUser, setSelectedUser }) => {
                   Edit Profile
                 </p>
                 <hr className="my-2 border-gray-500" />
-                <p className="cursor-pointer text-sm">Logout</p>
+                <p className="cursor-pointer text-sm" onClick={() => logout()}>Logout</p>
               </div>
             </div>
           </div>
 
           {/* Search Bar */}
-          <div className="bg-[#282142] rounded-full flex items-center gap-2 py-3 px-4 mt-5">
+          <div className="bg-[#282142] rounded-full  flex items-center gap-2 py-3 px-4 mt-5">
             <img src={assets.search_icon} alt="Search" className="w-3" />
             <input
               type="text"
               className="bg-transparent border-none outline-none text-white text-xs placeholder-[#c8c8c8] flex-1"
               placeholder="Search Chats"
+              value={seachInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
         </div>
 
         {/* User List */}
         <div className="flex flex-col">
-          {userDummyData.map((user, index) => (
+          {filteredUsers.map((user, index) => (
             <div
               onClick={() => setSelectedUser(user)}
               key={index}
@@ -61,21 +68,21 @@ const SideBar = ({ selectedUser, setSelectedUser }) => {
               }`}
             >
               <img
-                src={user?.profilePic || assets.avatar_icon}
+                src={user?.profilePic || assets.profile_martin}
                 alt=""
                 className="w-[35px] aspect-[1/1] rounded-full"
               />
               <div className="flex flex-col leading-5">
                 <p>{user.fullName}</p>
-                {index < 3 ? (
+                {onlineUsers.includes(user._id) ? (
                   <span className="text-green-400 text-xs">Online</span>
                 ) : (
                   <span className="text-neutral-400 text-xs">Offline</span>
                 )}
               </div>
-              {index > 2 && (
+              {unseenMessages[user._id] > 0 && (
                 <p className="absolute top-4 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50">
-                  {index}
+                  {unseenMessages[user._id]}
                 </p>
               )}
             </div>

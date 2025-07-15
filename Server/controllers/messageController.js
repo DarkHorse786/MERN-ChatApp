@@ -85,8 +85,10 @@ export const markMessageAsSeen = async (req, res) => {
 //send message to the selected user
 export const sendMessage = async (req, res) => {
     try {
+        console.log("Sending message to user:", req.body.text);
         const { text, image } = req.body; // Get the receiverId, text, and image from the request body
-        const { receiverId } = req.params; // Get the receiverId from the request parameters
+        console.log("Received text:", req.params);
+        const { id: receiverId } = req.params; // Get the receiverId from the request parameters
         if (!receiverId || !text) {
             return res.json({ success: false, message: "Receiver ID and text are required" });
         }
@@ -113,6 +115,7 @@ export const sendMessage = async (req, res) => {
             text,
             image: imageUrl,
         });
+        
 
         // Emit the new message to the receiver's socket
         const receiverSocketId = userSocketMap[receiverId];
@@ -121,7 +124,6 @@ export const sendMessage = async (req, res) => {
         } else {
             console.log(`Receiver with ID ${receiverId} is not online`);
         }
-
         res.json({ success: true, messageData: newMessage }); // Respond with the created message
     } catch (error) {
         console.error("Error sending message:", error);
