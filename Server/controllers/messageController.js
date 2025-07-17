@@ -125,3 +125,22 @@ export const sendMessage = async (req, res) => {
         res.json({ success: false, message: "Internal server error",error: error.message });
     }
 };
+
+// api to clear chat 
+export const clearChat = async (req, res) => {
+    try {
+        const { id: selectedUserId } = req.params; // Get the userId from the request parameters
+        const currentUserId = req.user._id; // Get the logged-in user's ID
+
+        // Find messages between the logged-in user and the selected user
+        const messages = await messageModel.deleteMany({
+            $or: [
+                { senderId: currentUserId, receiverId: selectedUserId },
+                { senderId: selectedUserId, receiverId: currentUserId }
+            ]
+        });
+        res.json({ success: true, message:"Chat has been Cleared" }); // Respond with the created message
+    } catch (error) {
+        res.json({ success: false, message: "Internal server error", error: error.message });
+    }
+};

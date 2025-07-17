@@ -6,7 +6,7 @@ import { authContext } from "../context/AuthContext.jsx";
 import toast from "react-hot-toast";
 
 const ChatContainer = () => {
-  const { selectedUser, messages, setSelectedUser,sendMessage,getMessages } = useContext(ChatContext);
+  const { selectedUser, messages, setSelectedUser,sendMessage,getMessages,clearChat } = useContext(ChatContext);
   const { authUser, onlineUsers } = useContext(authContext);
   const scrollEnd = useRef();
   const [inputMessage, setInputMessage] = useState("");
@@ -66,7 +66,7 @@ const ChatContainer = () => {
                 className="max-h-5 cursor-pointer"
               />
               <div className="absolute right-0 top-full z-20 bg-[#282142] w-24 p-3 border border-gray-600 text-gray-100 rounded-md hidden group-hover:block">
-                <p className="cursor-pointer text-sm" >Clear Chat</p>
+                <p className="cursor-pointer text-sm" onClick={()=>clearChat()}>Clear Chat</p>
               </div>
             </div>
         <img

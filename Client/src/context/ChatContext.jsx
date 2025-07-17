@@ -12,7 +12,7 @@ export const ChatProvider = ({ children }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [unseenMessages, setUnseenMessages] = useState({});
 
-  const {socket  ,axios}=useContext(authContext);
+  const {socket,axios,authUser}=useContext(authContext);
 
   // function to get all users for sidebar
   const getUsers = async () => {
@@ -45,7 +45,6 @@ export const ChatProvider = ({ children }) => {
   const sendMessage = async (messageContent) => {
     try {
       const response = await axios.post(`/api/messages/send/${selectedUser._id}`, messageContent);
-      console.log("Message sent:", response);
       if (response.data.success) {
         setMessages(prevMessages => [...prevMessages, response.data.messageData]);
 
@@ -54,7 +53,18 @@ export const ChatProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-
+  // function to clear chat
+   const clearChat = async () => {
+    try {
+      const response = await axios.delete(`/api/messages/clear/${selectedUser._id}`);
+      if (response.data.success) {
+        setMessages([]);
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   // function to subscribe to message for selected user
   const subscribeToMessages = () => {
     if (!socket) return;
@@ -96,7 +106,8 @@ export const ChatProvider = ({ children }) => {
     setUnseenMessages,
     getUsers,
     getMessages,
-    sendMessage
+    sendMessage,
+    clearChat
   };
 
   return (
