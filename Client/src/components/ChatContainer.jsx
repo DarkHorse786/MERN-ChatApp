@@ -93,7 +93,7 @@ const ChatContainer = () => {
               />
             ) : (
               <p
-                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${
+                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 break-words bg-violet-500/30 text-white ${
                   msg.senderId === authUser._id
                     ? "rounded-br-none"
                     : "rounded-bl-none"
@@ -111,10 +111,10 @@ const ChatContainer = () => {
                     : selectedUser.profilePic || assets.profile_martin
                 }
                 alt=""
-                className="w-7 rounded-full"
+                className="w-7 h-7 rounded-full"
               />
-              <p className="text-gray-500">
-                {formatMessageTime(msg.createdAt)}
+              <p className="text-gray-400">
+                {formatMessageTime(msg.timestamps )}
               </p>
             </div>
           </div>
