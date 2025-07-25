@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
         const {data} = await axios.post(`/api/auth/${state}`, Credentials);
         if (data.success) {
             if(state === "signin") 
-              setAuthUser(data.userData);
+            setAuthUser(data.userData);
             connectSocket(data.userData);
             toast.success(data.message);
             navigate("/");
