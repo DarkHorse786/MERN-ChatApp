@@ -31,13 +31,13 @@ const SideBar = () => {
 
   return (
     <div
-      className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl text-white overflow-hidden relative backdrop-blur-lg flex flex-col justify-between ${
+      className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl text-white overflow-y-scroll relative backdrop-blur-lg flex flex-col justify-between ${
         selectedUser ? " max-md:hidden" : ""
       }`}
     >
       {/* Header and Search */}
       <div className="flex-shrink-0">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center"> 
           <img src={assets.logo} alt="logo" className="max-w-40" />
           <div className="py-2 group relative">
             <img
