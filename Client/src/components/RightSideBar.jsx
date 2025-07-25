@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 const RightSideBar = () => {
   const { selectedUser, messages } = useContext(ChatContext);
-  const {onlineUsers} = useContext(authContext);
+  const { logout, onlineUsers } = useContext(authContext);
   const [images, setImages] = useState([]);
 
   useEffect(() => {
@@ -56,7 +56,8 @@ const RightSideBar = () => {
             ))}
           </div>
         </div>
-        <button className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer">
+        <button className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer"
+          onClick={() => logout()}>
           Logout
         </button>
       </div>

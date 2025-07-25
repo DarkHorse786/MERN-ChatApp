@@ -51,7 +51,7 @@ const ChatContainer = () => {
         <img
           src={selectedUser?.profilePic || assets.profile_martin}
           alt="User profile"
-          className="w-8 rounded-full"
+          className="w-8 h-8 rounded-full"
         />
         <p className="flex-1 text-lg text-white flex items-center gap-2">
           {selectedUser.fullName}
@@ -60,15 +60,15 @@ const ChatContainer = () => {
           }
         </p>
         <div className="py-2 group relative">
-              <img
-                src={assets.menu_icon}
-                alt="Menu"
-                className="max-h-5 cursor-pointer"
-              />
-              <div className="absolute right-0 top-full z-20 bg-[#282142] w-24 p-3 border border-gray-600 text-gray-100 rounded-md hidden group-hover:block">
-                <p className="cursor-pointer text-sm" onClick={()=>clearChat()}>Clear Chat</p>
-              </div>
-            </div>
+          <img
+            src={assets.menu_icon}
+            alt="Menu"
+            className="max-h-5 cursor-pointer"
+          />
+          <div className="absolute right-0 top-full z-20 bg-[#282142] w-24 p-3 border border-gray-600 text-gray-100 rounded-md hidden group-hover:block">
+            <p className="cursor-pointer text-sm" onClick={()=>clearChat()}>Clear Chat</p>
+          </div>
+        </div>
         <img
           onClick={() => setSelectedUser(null)}
           src={assets.arrow_icon}
@@ -142,7 +142,7 @@ const ChatContainer = () => {
             />
           </label>
         </div>
-        <img src={assets.send_button} onClick={(e)=>handleSendMessage(e)} alt="" className="w-7 cursor-pointer" />
+        <img src={assets.send_button} onClick={(e)=>handleSendMessage(e)} alt="" className="w-10 cursor-pointer" />
       </div>
     </div>
   ) : (
