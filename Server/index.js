@@ -16,11 +16,9 @@ const server = createServer(app);
 // Connect MongoDB
 connectDB();
 
-app.use(express.json({limit: '5mb'}));
-
 const allowedOrigins = [
   "http://localhost:5173",         // for local development
-  "https://your-frontend-domain.com" // ✅ your hosted frontend domain
+  "https://mern-chatapp-786.onrender.com" // ✅ your hosted frontend domain
 ];
 
 app.use(cors({
@@ -34,6 +32,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(cookieParser());
+app.use(express.json({limit: '5mb'}));
 
 const port = process.env.PORT || 3000;
 app.use("/api/status", (req, res) => {
